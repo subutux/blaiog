@@ -34,7 +34,7 @@ def main(config,web=True,trap=True):
         loop.add_signal_handler(getattr(signal, signame),
                                 ask_exit)
     w = blaiog.web.Web(config,loop)
-    asyncio.run_until_complete(w.start())
+    loop.run_until_complete(w.start())
     loop.run_forever()
     loop.close()
     

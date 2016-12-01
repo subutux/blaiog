@@ -112,6 +112,7 @@ def user_add(engine, user, password, full_name=' ', superuser=False,
         permission_id = None
     user = models.User.insert().values(login=user,
            password=pass_hash,
+           full_name=full_name,
            is_superuser=superuser,
            permissions=permission_id)
     r = conn.execute(user)
