@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-from sqlalchemy import Table, Column, String, Integer, ForeignKey, Boolean, DateTime, Text
+from sqlalchemy import MetaData, Table, Column, String, Integer, ForeignKey, Boolean, DateTime, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 import logging
@@ -7,39 +7,48 @@ log = logging.getLogger('blaiog.db.models')
 log.addHandler(logging.NullHandler())
 
 Base = declarative_base()
+metadata = MetaData()
 
-
-class Permission(Base):
-    __tablename__ = "permission"
-    id = Column(Integer, primary_key=True,autoincrement=True)
-    users = relationship("User", cascade="all, delete-orphan",
-                            backref='permission')
-    name = Column(String(256),nullable=False)
+Permission = Table('permission',metadata,
+    Column('id',Integer, primary_key=True,autoincrement=True),
+    Column('name',String(256),nullable=False)
+    )
     
-class User(Base):
-    __tablename__ = "user"
-    id = Column(Integer, primary_key=True,autoincrement=True)
-    login = Column(String(256),nullable=False)
-    full_name = Column(String(256),nullable=False)
-    password = Column(String(256),nullable=False)
-    is_superuser = Column(Boolean,nullable=False,
-                          server_default='0')
-    disabled = Column(Boolean,nullable=False,
-                          server_default='0')
-    permissions = Column(Integer,ForeignKey('permission.id'),primary_key=True,nullable=True)
+User = Table( "user", metadata,
+    Column('id',Integer, primary_key=True,autoincrement=True),
+    Column('login',String(256),nullable=False),
+    Column('full_name', String(256),nullable=False),
+    Column('password',String(256),nullable=False),
+    Column('is_superuser',Boolean,nullable=False,
+                          server_default='0'),
+    Column('disabled',Boolean,nullable=False,
+                          server_default='0'),
+    Column('permissions', Integer,ForeignKey('permission.id'),
+                         primary_key=True,nullable=True))
     
-    posts = relationship('post')
+    #posts = relationship('post')
 
 
-class Post(Base):
-    __tablename__ = 'post'
-    id = Column(Integer, primary_key=True,autoincrement=True)
-    title = sa.Column(String(256),nullable=False)
-    url_title = sa.Column(String(256),nullable=False)
-    writer_id = Column(Integer,ForeignKey('writer.id'),primary_key=True,nullable=False)
-    short_body = sa.Column(Text(),nullable=True)
-    body = sa.Column(Text(),nullable=False)
-    created = sa.Column(DateTime,default=sa.func.now())
-    last_update= sa.Column(DateTime,default=sa.func.now())
-    active = sa.Column(Boolean,nullable=False,server_default="0")
+Post = Table('post',metadata,
+    Column('id', Integer, primary_key=True,autoincrement=True),
+    Column('title', String(256),nullable=False),
+    Column('url_title',String(256),nullable=False),
+    Column('writer_id',Integer,ForeignKey('user.id'),primary_key=True,nullable=False),
+    Column('short_body',Text(),nullable=True),
+    Column('body',Text(),nullable=False),
+    Column('created',DateTime,default=sa.func.now()),
+    Column('last_update',DateTime,default=sa.func.now()),
+    Column('active',Boolean,nullable=False,server_default="0"),
+    )
 
+Page = Table('page',metadata,
+    Column('id', Integer, primary_key=True,autoincrement=True),
+    Column('title', String(256),nullable=False),
+    Column('url_title',String(256),nullable=False),
+    Column('writer_id',Integer,ForeignKey('user.id'),primary_key=True,nullable=False),
+    Column('short_body',Text(),nullable=True),
+    Column('body',Text(),nullable=False),
+    Column('created',DateTime,default=sa.func.now()),
+    Column('last_update',DateTime,default=sa.func.now()),
+    Column('active',Boolean,nullable=False,server_default="0"),
+    )

@@ -1,4 +1,4 @@
-from .core import exceptions
+from . import exceptions
 import yaml
 import os
 
@@ -21,6 +21,9 @@ DEFAULTS = {
                 "port": 8080
             }
         }
+    },
+    "blog": {
+        "theme": "default"
     }
 }
 

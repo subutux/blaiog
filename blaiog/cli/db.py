@@ -24,7 +24,7 @@ def create_superuser(config,args):
                                      db=config["db"]["database"],
                                      host=config["db"]["host"])
     
-    session = Engine.get_db_session(engine)
+    
     
     
     # get user password
@@ -34,9 +34,8 @@ def create_superuser(config,args):
     if pone != ptwo:
         log.error("Passwords do not match!")
         exit(1)
-    log.debug(session)
-    group = authentication.permission_add(session,"Superuser")
-    authentication.user_add(session,user=args.superuser,password=pone,
+    group = authentication.permission_add(engine,"Superuser")
+    authentication.user_add(engine,user=args.superuser,password=pone,
                             superuser=True,permission=group)
 
 def change_password(config,args):

@@ -6,3 +6,5 @@ class ConfigNotFoundError(Exception):
 
 class ConfigNotParsedError(Exception):
     pass
+class NotConnectedError(Exception):
+    pass

@@ -2,6 +2,11 @@
 import argparse
 import logging
 import sys
+import blaiog.blaiog
+from blaiog.exceptions import *
+from blaiog import config as conf
+import blaiog.cli.configuration
+import blaiog.cli.db
 
 LOGLEVELS = ["ERROR","WARNING","INFO","DEBUG"]
 def main():
@@ -39,6 +44,8 @@ def main():
     logFormatter = logging.Formatter("%(asctime)s [%(name)s] \
 [%(levelname)-5.5s]  %(message)s")
     log = logging.getLogger("blaiog")
+    sqllog = logging.getLogger('sqlalchemy.engine')
+    sqllog.setLevel(logging.INFO)
     
     if args.verbose > len(LOGLEVELS):
         args.verbose = len(LOGLEVELS)
@@ -47,4 +54,25 @@ def main():
     consoleHandler = logging.StreamHandler(sys.stdout)
     consoleHandler.setFormatter(logFormatter)
     log.addHandler(consoleHandler)
+    sqllog.addHandler(consoleHandler)
+    if args.init_config:
+       blaiog.cli.configuration.init_config(conf,args)
     
+    
+    log.debug("Opening config file {}".format(args.config))
+    try:
+        config = conf.Config(args.config).get()
+    except ConfigNotFoundError as exc:
+        log.error(exc)
+        exit(1)
+    except ConfigNotParsedError as exc:
+        log.error("Unable to parse configfile: {}".format(exc))
+        exit(1)
+    
+    if args.init_database:
+        blaiog.cli.db.init_db(config)
+        exit(0)
+    if args.superuser:
+        blaiog.cli.db.create_superuser(config,args)
+        exit(0)
+    blaiog.blaiog.main(config)

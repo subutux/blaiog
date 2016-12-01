@@ -1,0 +1,18 @@
+{% extends master.tmpl.html %}
+{% block title %}{{ curr['title'] - by curr['writer'] }} {% endblock %}
+{% block header %} {{ super() }} {% endblock %}
+{% block content %}
+<div class="container">
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+          {% for curr in blogs %}
+          <div class="blog-post">
+            <h2 class="blog-post-title"> {{ curr['title'] }}</h2>
+            <p class="blog-post-meta">{{ curr['datetime'] }} by <a href="#">{{ curr['writer'].full_name }}</a></p>
+            {{ curr['short_body'] }} <a href="{{ curr.['url'] }}">Read more</a>
+          </div>
+        </div>
+      </div>
+</div>

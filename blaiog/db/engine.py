@@ -2,8 +2,10 @@ import asyncio
 from . import models
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.schema import CreateTable
 import aiomysql.sa
 import logging
+from blaiog.exceptions import NotConnectedError
 log = logging.getLogger('blaiog.db.engine')
 log.addHandler(logging.NullHandler())
 
@@ -28,7 +30,14 @@ def get_db_session(engine):
 
 def init_db(engine):
     log.debug("Creating tables")
-    models.Base.metadata.create_all(engine)
+    tables = models.metadata.tables.keys()
+    conn = engine.connect()
+    for table in tables:
+        Q = 'DROP TABLE IF EXISTS {}'.format(table)
+        conn.execute(Q)
+        conn.execute(CreateTable(models.metadata.tables[table]))
+    conn.close()  
+    #models.MetaData.create_all(engine)
 
 
 class Engine(object):
@@ -38,18 +47,16 @@ class Engine(object):
 
     def __init__(self, config):
         self._config = config
-        self._engine = None
-        self._session = None
+        self.engine = None
 
     @asyncio.coroutine
     def connect(self):
-        self._engine = yield from aiomysql.sa.create_engine(
+        self.engine = yield from aiomysql.sa.create_engine(
             user=self._config["db"]["user"],
             password=self._config["db"]["password"],
             host=self._config["db"]["host"],
-            db=self._config["db"]["database"])
+            db=self._config["db"]["database"],
+            echo=True,
+            autocommit=True)
+    
 
-    def session(self):
-        if self._session is None:
-            self._session = sessionmaker(bind=self._engine)
-        return self._session

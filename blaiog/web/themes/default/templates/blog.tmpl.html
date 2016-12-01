@@ -1,0 +1,23 @@
+{% extends "master.tmpl.html" %}
+{% block title %}{{ post['title'] }} {% endblock %}
+{% block header %} {{ super() }} {% endblock %}
+{% block content %}
+<div class="container">
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+            <h2 class="blog-post-title"> {{ post['post_title'] }}</h2>
+            <p class="blog-post-meta">{{ post['post_last_update'] }} by <a href="#">{{ post['user_login'] }}</a>
+            {% if session %} {% if session["user_info"] %} {% if session["user_info"]["is_superuser"] == 1 %}
+            - <a href="/post/{{ post['post_url_title'] }}/edit">Edit</a>
+            {% endif %}{% endif %}{% endif %}
+            </p>
+            {{ post['post_body'] }}
+          </div>
+        </div>
+      </div>
+</div>
+{% endblock %}

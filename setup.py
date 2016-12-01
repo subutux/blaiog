@@ -25,8 +25,12 @@ setup(
         "console_scripts": ['blaiog = blaiog.cli:main']
     },
     install_requires= [
-    
+        "pyyaml",
+        "passlib",
         "aiohttp",
+        "aiohttp-jinja2",
+        "aiohttp_session[secure]",
+        "aiohttp_security",
         "sqlalchemy",
         "aiomysql"
         
