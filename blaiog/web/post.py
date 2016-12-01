@@ -6,7 +6,10 @@ from sqlalchemy.sql.functions import now
 from sqlalchemy.sql import select, and_
 import asyncio
 from aiohttp import web
+from .utils import get_pages, md
 import unicodedata
+import copy
+import markdown2
 import re
 import logging
 log = logging.getLogger('blaiog.web.post')
@@ -25,8 +28,9 @@ class Post(web.View):
             r = yield from conn.execute(q)
             post = yield from r.fetchone()
         
-        log.debug("Post: {}".format(post))
-        log.debug("Session: {}".format(session))
+        pages = yield from get_pages(self.request.app.db.engine)
+        p = copy.deepcopy(dict(post))
+        p["body"] = md(p["post_body"])
         if post is None:
             return web.HTTPNotFound()
         else:
@@ -34,7 +38,8 @@ class Post(web.View):
         return {
             "session": session,
             "error": error,
-            "post": post
+            "post": p,
+            "pages": pages
         }
 
 def register(app):

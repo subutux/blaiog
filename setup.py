@@ -32,7 +32,9 @@ setup(
         "aiohttp_session[secure]",
         "aiohttp_security",
         "sqlalchemy",
-        "aiomysql"
+        "aiomysql",
+	"markdown2",
+	"pygments"
         
     ],
     #tests_require=["requests_mock"],

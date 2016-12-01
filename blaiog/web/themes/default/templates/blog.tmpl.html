@@ -1,6 +1,14 @@
 {% extends "master.tmpl.html" %}
 {% block title %}{{ post['title'] }} {% endblock %}
-{% block header %} {{ super() }} {% endblock %}
+{% block head %} {{ super() }} 
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@subutux" />
+<meta name="twitter:title" content="{{ post['post_title'] }}" />
+<meta name="twitter:description" content="{{ post['post_short_body'] }}" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{{ post['post_title'] }}" />
+<meta property="og:description" content="{{ post['post_short_body'] }}">
+{% endblock %}
 {% block content %}
 <div class="container">
 
@@ -15,7 +23,18 @@
             - <a href="/post/{{ post['post_url_title'] }}/edit">Edit</a>
             {% endif %}{% endif %}{% endif %}
             </p>
-            {{ post['post_body'] }}
+             {{ post['body'] }}
+            <p>
+            <a class="btn btn-outline-secondary btn-sm" data-toggle="collapse" href="#markdown-source" aria-expanded="false" aria-controls="collapseExample">
+              Source
+            </a>
+            <div class="collapse" id="markdown-source">
+              <div class="card card-block">
+                <pre>
+{{ post['post_body'] }}
+</pre>
+              </div>
+              </div>
           </div>
         </div>
       </div>

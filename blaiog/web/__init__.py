@@ -16,6 +16,9 @@ from aiohttp_session.cookie_storage import EncryptedCookieStorage
 
 from aiohttp_security import setup as setup_security, authorized_userid
 from aiohttp_security import SessionIdentityPolicy
+from sqlalchemy.sql import select, and_
+from blaiog.db import models
+from .utils import get_pages, md
 import logging
 log = logging.getLogger('blaiog.web')
 log_access = logging.getLogger('blaiog.web.access')
@@ -24,30 +27,32 @@ log.addHandler(logging.NullHandler())
 class index(web.View):
     
     @asyncio.coroutine
-    @aiohttp_jinja2.template('page.tmpl.html')
+    @aiohttp_jinja2.template('blog_overview.tmpl.html')
     def get(self):
         
         session = yield from aiohttp_session.get_session(self.request)
+        with (yield from self.request.app.db.engine) as conn:
+            # fetch the blogs & there sort body
+            where = models.Post.c.writer_id == models.User.c.id
+            q_posts = select([models.Post.c.title,models.Post.c.url_title,
+                        models.Post.c.short_body,
+                        models.Post.c.last_update,
+                        models.User.c.login],use_labels=True).where(where)
+            q_posts = q_posts.limit(10)
+            r_posts = yield from conn.execute(q_posts)
+            posts = yield from r_posts.fetchall()
+            pages = yield from get_pages(self.request.app.db.engine)
+            
         data = {
-            "curr": {
-                "admin": False,
-                "title": "Test",
-                "datetime": 1234567,
-                "writer": {
-                    "full_name": "Test Tester"
-                },
-                "body": "<p> Test body </p>"
-            },
-            "pages": [],
+            "posts": posts,
+            "pages": pages,
             "session": None,
             "a": "home"
         }
         
         username = yield from authorized_userid(self.request)
         if "user_info" in session:
-            log.info("User session data: {}".format(session['user_info']))
-        data["session"] = session
-        log.debug(data)
+            data["session"] = session
         return data
         
 

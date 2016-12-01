@@ -2,6 +2,7 @@
 {% block title %} New Post {% endblock %}
 {% block head %}{{ super() }} 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/tomorrow.min.css">
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -16,13 +17,11 @@
             
             <div class="form-group">
               <label for="title">Title</label>
-              <input type="text" class="form-control" name="title" id="title" value="{% if post %} {{ post[1] }} {% endif %}" placeholder="title of this post">
+              <input type="text" class="form-control" name="title" id="title" value="{% if post %}{{ post[1] }}{% endif %}" placeholder="title of this post">
             </div>
               <div class="form-group">
                 <label for="short_body">Short body</label>
-                <textarea class="form-control" id="short_body" name="short_body" rows="3">
-{% if post %} {{ post[4] }} {% endif %}
-                </textarea>
+                <textarea class="form-control" id="short_body" name="short_body" rows="3">{% if post %}{{ post[4] }}{% endif %}</textarea>
               </div>
             
         </div>
@@ -58,7 +57,14 @@
 {%block footer %}
 {{ super() }}
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
 <script>
-var simplemde = new SimpleMDE({ element: document.getElementById("body") });
+var simplemde = new SimpleMDE({ element: document.getElementById("body"),
+                                showIcons: ["bold","italic","header","|","code","unordered-list","unordered-list", "table",
+                                            "|","link","image","|","preview","side-by-side","fullscreen"],
+                                renderingConfig: {
+                                  codeSyntaxHighlighting: true
+                                }
+});
 </script>
 {% endblock %}

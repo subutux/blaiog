@@ -8,12 +8,17 @@ import asyncio
 from aiohttp import web
 import unicodedata
 import re
+import copy
+import markdown2
+from .utils import get_pages, md
 import logging
 log = logging.getLogger('blaiog.web.post')
 log.addHandler(logging.NullHandler())
 
 class Page(web.View):
     @asyncio.coroutine
+
+        
     @template('page.tmpl.html')
     def get(self):
         session = yield from get_session(self.request)
@@ -24,9 +29,11 @@ class Page(web.View):
         with (yield from self.request.app.db.engine) as conn:
             r = yield from conn.execute(q)
             page = yield from r.fetchone()
+        pages = yield from get_pages(self.request.app.db.engine)
         
-        log.debug("page: {}".format(dict(page)))
-        log.debug("Session: {}".format(session))
+        
+        p = copy.deepcopy(dict(page))
+        p["body"] = md(p["page_body"])
         if page is None:
             return web.HTTPNotFound()
         else:
@@ -34,7 +41,9 @@ class Page(web.View):
         return {
             "session": session,
             "error": error,
-            "page": page
+            "page": p,
+            "pages": pages,
+            "a": page["page_url_title"]
         }
 
 def register(app):

@@ -26,13 +26,13 @@
         <nav class="nav blog-nav">
           <a class="nav-link{% if a == 'home' %} active{% endif %}" href="/">Home</a>
           {% for page in pages %}
-          <a class="nav-link{% if curr['url'] == page['url'] %} active{% endif %}" href="{{ page['url'] }}">{{ page['title'] }}</a>
+          <a class="nav-link{% if a == page['page_url_title'] %} active{% endif %}" href="/page/{{ page['page_url_title'] }}">{{ page['page_title'] }}</a>
           {% endfor %}
           {% if session["user_info"] %}
-          <a class="nav-link" href="/logout">Welcome, {{ session["user_info"]["login"] }}</a>
+          <a class="nav-link float-xs-right" href="/logout">Welcome, {{ session["user_info"]["login"] }}</a>
             {% if session["user_info"]["is_superuser"] %}
-              <a class="nav-link{% if a == 'new_post' %} active{% endif %}" href="/post/edit">New Post </a>
-              <a class="nav-link{% if a == 'new_page' %} active{% endif %}" href="/page/edit">New Page </a>
+              <a class="nav-link{% if a == 'new_post' %} active{% endif %} float-xs-right" href="/post/edit">New Post </a>
+              <a class="nav-link{% if a == 'new_page' %} active{% endif %} float-xs-right" href="/page/edit">New Page </a>
             {% endif %}
           {% endif %}
         </nav>

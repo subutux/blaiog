@@ -10,8 +10,20 @@
 
           <div class="blog-post">
             <h2 class="blog-post-title"> {{ page['page_title'] }}</h2>
-            <p class="blog-post-meta">{{ page['page_last_update'] }} by <a href="#">{{ page['user_login'] }}</a></p>
-            {{ page['page_body'] }}
+            <p class="blog-post-meta">{{ page['page_last_update'] }} by <a href="#">{{ page['user_login'] }}</a>
+            {% if session %} {% if session["user_info"] %} {% if session["user_info"]["is_superuser"] == 1 %}
+            - <a href="/page/{{ page['page_url_title'] }}/edit">Edit</a>
+            {% endif %}{% endif %}{% endif %}
+            </p>
+            {{ page['body'] }}
+            <p>
+            <a class="btn btn-outline-secondary btn-sm" data-toggle="collapse" href="#markdown-source" aria-expanded="false" aria-controls="collapseExample">
+              Source
+            </a>
+            <div class="collapse" id="markdown-source">
+              <div class="card card-block"><pre>{{ page['page_body'] }}</pre>
+              </div>
+              </div>
           </div>
         </div>
       </div>
