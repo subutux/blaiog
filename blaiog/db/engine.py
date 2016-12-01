@@ -32,7 +32,7 @@ def init_db(engine):
     log.debug("Creating tables")
     tables = models.metadata.tables.keys()
     conn = engine.connect()
-    for table in tables:
+    for table in ('permission','user','page','post'):
         Q = 'DROP TABLE IF EXISTS {}'.format(table)
         conn.execute(Q)
         conn.execute(CreateTable(models.metadata.tables[table]))
