@@ -39,8 +39,8 @@ setup(
     ],
     #tests_require=["requests_mock"],
     test_suite="tests",
-    package_data={ 'hud': [
-        'web/themes/default/static/*?css',
+    package_data={ 'blaiog': [
+        'web/themes/default/static/*.css',
         'web/themes/default/templates/*.html'
         ]
     }
