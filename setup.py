@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-from setuptools import setup
+from setuptools import setup, find_packages
 import re
  
  
 version = re.search(
     '^__version__\s*=\s*"(.*)"',
-    open('blaiog/runner.py').read(),
+    open('blaiog/blaiog.py').read(),
     re.M
     ).group(1)
  
@@ -17,7 +17,7 @@ version = re.search(
 setup(
     name="blaiog",
     version=version,
-    packages = ["blaiog"],
+    packages = ["blaiog","blaiog.web","blaiog.db","blaiog.cli"],
     description="A python async blogging platform",
     # long_description=long_descr,
    
@@ -38,6 +38,10 @@ setup(
         
     ],
     #tests_require=["requests_mock"],
-    test_suite="tests"
-    
+    test_suite="tests",
+    package_data={ 'hud': [
+        'web/themes/default/static/*?css',
+        'web/themes/default/templates/*.html'
+        ]
+    }
 )

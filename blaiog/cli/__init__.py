@@ -2,7 +2,7 @@
 import argparse
 import logging
 import sys
-import blaiog.runner
+import blaiog.blaiog
 from blaiog.exceptions import *
 from blaiog import config as conf
 import blaiog.cli.configuration
@@ -75,4 +75,4 @@ def main():
     if args.superuser:
         blaiog.cli.db.create_superuser(config,args)
         exit(0)
-    blaiog.runner.main(config)
+    blaiog.blaiog.main(config)
