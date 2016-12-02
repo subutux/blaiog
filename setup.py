@@ -5,7 +5,7 @@ import re
  
 version = re.search(
     '^__version__\s*=\s*"(.*)"',
-    open('blaiog/blaiog.py').read(),
+    open('blaiog/runner.py').read(),
     re.M
     ).group(1)
  
