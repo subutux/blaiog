@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-from sqlalchemy import MetaData, Table, Column, String,
+from sqlalchemy import MetaData, Table, Column, String
 from sqlalchemy import Integer, ForeignKey, Boolean, DateTime, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
