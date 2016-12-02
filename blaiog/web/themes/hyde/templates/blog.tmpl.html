@@ -1,0 +1,23 @@
+{% extends "master.tmpl.html" %}
+{% block title %}{{ post['title'] }} {% endblock %}
+{% block head %} {{ super() }} 
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@subutux" />
+<meta name="twitter:title" content="{{ post['post_title'] }}" />
+<meta name="twitter:description" content="{{ post['post_short_body'] }}" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{{ post['post_title'] }}" />
+<meta property="og:description" content="{{ post['post_short_body'] }}">
+{% endblock %}
+{% block content %}
+
+<div class="post">
+  <h1 class="post-title">{{ post['post_title'] }}</h1>
+  <span class="post-date">{{ post['post_last_update'] }} by {{ post['user_login'] }}{% if session %} {% if session["user_info"] %} {% if session["user_info"]["is_superuser"] == 1 %}
+            - <a href="/post/{{ post['post_url_title'] }}/edit">Edit</a>
+            {% endif %}{% endif %}{% endif %}</span>
+
+             {{ post['body'] }}
+</div>
+
+{% endblock %}

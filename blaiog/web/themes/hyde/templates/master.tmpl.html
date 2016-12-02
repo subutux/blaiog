@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>{% block title %}{% endblock %}</title>
+  {% block head %}
+  {% endblock %}
+  <!-- CSS -->
+  <link rel="stylesheet" href="/static/css/poole.css">
+  <link rel="stylesheet" href="/static/css/syntax.css">
+  <link rel="stylesheet" href="/static/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/static/favicon.ico">
+
+  <!-- RSS 
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+  -->
+</head>
+{% if session["user_info"]["is_superuser"] %}
+<body class="theme-base-09">
+{% else %}
+<body>
+{% endif %}
+    {% include 'sidebar.html' %}
+
+    <div class="content container">
+    {% block content %}
+    {% endblock %}
+    </div>
+
+    {% block footer %}
+    {% endblock %}
+  </body>
+</html>

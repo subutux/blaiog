@@ -1,0 +1,29 @@
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          Blaiog
+        </a>
+      </h1>
+      <p class="lead">A blog by example.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+       <a class="sidebar-nav-item{% if a == 'home' %} active{% endif %}" href="/">Home</a>
+          {% for page in pages %}
+          <a class="sidebar-nav-item{% if a == page['page_url_title'] %} active{% endif %}" href="/page/{{ page['page_url_title'] }}">{{ page['page_title'] }}</a>
+          {% endfor %}
+          {% if session["user_info"] %}
+          <a class="sidebar-nav-item" href="/logout">Welcome, {{ session["user_info"]["login"] }}</a>
+            {% if session["user_info"]["is_superuser"] %}
+              <a class="sidebar-nav-item{% if a == 'new_post' %} active{% endif %}" href="/post/edit">New Post </a>
+              <a class="sidebar-nav-item{% if a == 'new_page' %} active{% endif %}" href="/page/edit">New Page </a>
+            {% endif %}
+          {% endif %}
+      <a class="sidebar-nav-item" href="https://github.com/subutux/blaiog">GitHub project</a>
+    </nav>
+
+    <p>This theme is originally from <a href="http://getpoole.com">Poole</a>.</p>
+  </div>
+</div>
