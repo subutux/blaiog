@@ -10,6 +10,14 @@ import aiohttp_jinja2
 import jinja2
 
 import aiohttp_session
+try:
+    from aioredis import create_pool
+    from aiohttp_session.redis_storage import RedisStorage
+    USE_REDIS=True
+except Exception as e:
+    print("Will not use redis pool")
+    USE_REDIS=False
+
 import base64
 from cryptography import fernet
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
@@ -95,13 +103,21 @@ class Web(object):
         self.app.db = Engine(self._config)
         yield from self.app.db.connect()
         # session
-        fernet_key = fernet.Fernet.generate_key()
-        secret_key = base64.urlsafe_b64decode(fernet_key)
-        aiohttp_session.setup(self.app, EncryptedCookieStorage(secret_key))
+        if self._config["web"]["session"]["use_redis"] and USE_REDIS:
+            #setup redis pool
+            redis_cfg = self._config["web"]["session"]["redis"]
+            redis_pool = yield from create_pool((redis_cfg["host"], int(redis_cfg["port"])))
+            aiohttp_session.setup(self.app,RedisStorage(redis_pool))
+            
+        else:
+            # use secure key
+            fernet_key = fernet.Fernet.generate_key()
+            secret_key = base64.urlsafe_b64decode(fernet_key)
+            aiohttp_session.setup(self.app, EncryptedCookieStorage(secret_key))
         # authentication
         setup_security(self.app,
-                   SessionIdentityPolicy(),
-                   DBAuthorizationPolicy(self.app.db.engine))
+                       SessionIdentityPolicy(),
+                       DBAuthorizationPolicy(self.app.db.engine))
         self.app.router.add_get('/', index)
         admin.register(self.app)
         edit.register(self.app)

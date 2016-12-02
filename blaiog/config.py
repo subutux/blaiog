@@ -11,7 +11,7 @@ DEFAULTS = {
         "host": "localhost",
         "user": "root",
         "password": "",
-        "database": "trapdoor"
+        "database": "blaiog"
     },
     "web": {
         "transport": {
@@ -20,7 +20,15 @@ DEFAULTS = {
                 "listen": "0.0.0.0",
                 "port": 8080
             }
+        },
+        "session": {
+            "use_redis": False,
+            "redis" : {
+                "host": "127.0.0.1",
+                "port": 6379
+            }
         }
+        
     },
     "blog": {
         "theme": "default"

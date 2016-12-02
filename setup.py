@@ -30,11 +30,12 @@ setup(
         "aiohttp",
         "aiohttp-jinja2",
         "aiohttp_session[secure]",
+        "aioredis",
         "aiohttp_security",
         "sqlalchemy",
         "aiomysql",
-	"markdown2",
-	"pygments"
+        "markdown2",
+        "pygments"
         
     ],
     #tests_require=["requests_mock"],
