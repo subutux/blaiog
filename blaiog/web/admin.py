@@ -39,7 +39,6 @@ class Login(web.View):
     def post(self):
         session = yield from get_session(self.request)
         form = yield from self.request.post()
-        log.info("Form: {}".format(form))
         login = form['user']
         password = form['password']
         engine = self.request.app.db.engine
