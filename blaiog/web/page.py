@@ -15,23 +15,23 @@ import logging
 log = logging.getLogger('blaiog.web.post')
 log.addHandler(logging.NullHandler())
 
-class Page(web.View):
-    @asyncio.coroutine
 
-        
+class Page(web.View):
+
+    @asyncio.coroutine
     @template('page.tmpl.html')
     def get(self):
         session = yield from get_session(self.request)
         url = self.request.match_info['page']
         where_page = models.Page.c.url_title == url
         where_user = models.Page.c.writer_id == models.User.c.id
-        q = select([models.Page, models.User],use_labels=True).where(and_(where_page,where_user))
+        q = select([models.Page, models.User],
+                   use_labels=True).where(and_(where_page, where_user))
         with (yield from self.request.app.db.engine) as conn:
             r = yield from conn.execute(q)
             page = yield from r.fetchone()
         pages = yield from get_pages(self.request.app.db.engine)
-        
-        
+
         p = copy.deepcopy(dict(page))
         p["body"] = md(p["page_body"])
         if page is None:
@@ -43,8 +43,8 @@ class Page(web.View):
             "error": error,
             "page": p,
             "pages": pages,
-            "a": page["page_url_title"]
-        }
+            "a": page["page_url_title"]}
+
 
 def register(app):
-    app.router.add_route('*','/page/{page}',Page)
+    app.router.add_route('*', '/page/{page}', Page)

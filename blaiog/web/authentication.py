@@ -1,6 +1,6 @@
-from passlib.hash import pbkdf2_sha512
 from blaiog import db
 from blaiog.db import models
+from passlib.hash import pbkdf2_sha512
 import asyncio
 import sqlalchemy as sa
 from sqlalchemy.sql import select, update
@@ -11,6 +11,7 @@ from aiohttp_security import remember, forget, authorized_userid, permits
 import logging
 log = logging.getLogger('blaiog.web.authentication')
 log.addHandler(logging.NullHandler())
+
 
 class DBAuthorizationPolicy(AbstractAuthorizationPolicy):
     def __init__(self, dbengine):
@@ -56,6 +57,7 @@ class DBAuthorizationPolicy(AbstractAuthorizationPolicy):
 
             return False
 
+
 def require(permission):
     def wrapper(f):
         @asyncio.coroutine
@@ -84,8 +86,9 @@ def check_credentials(db_engine, username, password):
             return pbkdf2_sha512.verify(password, hash)
     return False
 
+
 @asyncio.coroutine
-def async_get_user(engine,user):
+def async_get_user(engine, user):
     with (yield from engine) as conn:
         where = models.User.c.login == user
         query = models.User.select().where(where)
@@ -99,7 +102,7 @@ def async_get_user(engine,user):
         }
         log.info(result)
         return result
-    
+
 
 def user_add(engine, user, password, full_name=' ', superuser=False,
              permission=None):
@@ -111,32 +114,38 @@ def user_add(engine, user, password, full_name=' ', superuser=False,
     else:
         permission_id = None
     user = models.User.insert().values(login=user,
-           password=pass_hash,
-           full_name=full_name,
-           is_superuser=superuser,
-           permissions=permission_id)
+                                       password=pass_hash,
+                                       full_name=full_name,
+                                       is_superuser=superuser,
+                                       permissions=permission_id)
     r = conn.execute(user)
     conn.close()
-def permission_add(engine,group):
+
+
+def permission_add(engine, group):
     # check first uf permission already exists
     conn = engine.connect()
-    q = select([db.models.Permission]).where(db.models.Permission.c.name == group)
+    where = db.models.Permission.c.name == group
+    q = select([db.models.Permission]).where(where)
     result = conn.execute(q)
     perm = result.fetchone()
-    if perm == None:
+    if perm is None:
         pq = db.models.Permission.insert().values(name=group)
         conn.execute(pq)
-        q = select([db.models.Permission]).where(db.models.Permission.c.name == group)
+        where = db.models.Permission.c.name == group
+        q = select([db.models.Permission]).where(where)
         result = conn.execute(q)
         permission = result.fetchone()
-        
+
     else:
-        log.warn("Permission '{}' already exists. Using that one.".format(group))
+        log.warn("Permission '{}'\
+already exists. Using that one.".format(group))
         permission = perm
     conn.close()
     return permission
 
-def get_user(engine,user):
+
+def get_user(engine, user):
     conn = engine.connect()
     where = models.User.c.login == user
     q = models.User.select().where(where)
@@ -145,7 +154,8 @@ def get_user(engine,user):
     conn.close()
     return user
 
-def update_user_password(engine,user,password):
+
+def update_user_password(engine, user, password):
     pass_hash = pbkdf2_sha512.encrypt(password)
     conn = engine.connect()
     where = models.User.c.login == user
@@ -155,9 +165,10 @@ def update_user_password(engine,user,password):
     except Exception as e:
         log.exception(e)
     conn.close()
-def verify_password(user,password):
-    if pbkdf2_sha512.verify(password,user.password):
+
+
+def verify_password(user, password):
+    if pbkdf2_sha512.verify(password, user.password):
         print("OK")
     else:
         log.error("Password does not match!")
-        

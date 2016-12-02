@@ -2,7 +2,8 @@ import logging
 log = logging.getLogger('blaiog.cli.configuration')
 log.addHandler(logging.NullHandler())
 
-def init_config(conf,args):
+
+def init_config(conf, args):
     try:
         conf.writeDefaults(args.config)
     except Exception as e:

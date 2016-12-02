@@ -1,3 +1,4 @@
+from .utils import get_pages
 from blaiog.db import models
 from aiohttp_jinja2 import template
 from aiohttp_session import get_session
@@ -8,65 +9,68 @@ import asyncio
 from aiohttp import web
 import unicodedata
 import re
-from .utils import get_pages
 import logging
 log = logging.getLogger('blaiog.web.edit')
 log.addHandler(logging.NullHandler())
 
+
 class EditPost(web.View):
-    
+
     @template('edit_post.tmpl.html')
     def get(self):
-        
+
         session = yield from get_session(self.request)
-        
+
         if "post" in self.request.match_info:
             edit = self.request.match_info['post']
         else:
             edit = None
         if edit:
             with (yield from self.request.app.db.engine) as conn:
-                q = models.Post.select().where(models.Post.c.url_title == edit)
+                where = models.Post.c.url_title == edit
+                q = models.Post.select().where(where)
                 r = yield from conn.execute(q)
                 post = yield from r.fetchone()
         has_perm = yield from permits(self.request, "Superuser")
         if has_perm:
             if edit is None or post is None:
-                return { "error": None, "curr":{}, "session": session, "a": "new_post"}
+                return {"error": None,
+                        "curr": {},
+                        "session": session,
+                        "a": "new_post"}
             else:
-                return {"error": None, "curr": {}, "session": session,
-                    "post": post, "a": "new_post"
-                    }
+                return {"error": None,
+                        "curr": {},
+                        "session": session,
+                        "post": post,
+                        "a": "new_post"}
         else:
-            
             return web.HTTPFound('/')
-    
 
-
-    def slugify(self,value):
+    def slugify(self, value):
         """
         Normalizes string, converts to lowercase, removes non-alpha characters,
         and converts spaces to hyphens.
         """
-        value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+        value = unicodedata.normalize('NFKD', value)
+        value = value.encode('ascii', 'ignore')
+        value = value.decode('ascii')
         value = re.sub('[^\w\s-]', '', value).strip().lower()
         return re.sub('[-\s]+', '-', value)
-        
+
     @asyncio.coroutine
     @template('edit_post.tmpl.html')
     def post(self):
         has_perm = yield from permits(self.request, "Superuser")
         if not has_perm:
             return web.HTTPFound('/')
-        
+
         session = yield from get_session(self.request)
         form = yield from self.request.post()
         title = form['title']
         short_body = form['short_body']
         body = form['body']
-        
         post_id = form['id'] if 'id' in form else None
-        
         url = self.slugify(title)
         engine = self.request.app.db.engine
         if post_id is None:
@@ -94,14 +98,15 @@ class EditPost(web.View):
             for row in res:
                 print(row)
         return web.HTTPFound('/post/{}'.format(url))
-        
+
+
 class EditPage(web.View):
-    
+
     @template('edit_page.tmpl.html')
     def get(self):
-        
+
         session = yield from get_session(self.request)
-        
+
         if "page" in self.request.match_info:
             edit = self.request.match_info['page']
         else:
@@ -114,40 +119,38 @@ class EditPage(web.View):
         has_perm = yield from permits(self.request, "Superuser")
         if has_perm:
             if edit is None or page is None:
-                return { "error": None, "curr":{}, "session": session, "a": "new_page"}
+                return {"error": None, "curr": {}, "session": session,
+                        "a": "new_page"}
             else:
                 return {"error": None, "curr": {}, "session": session,
-                    "page": page, "a": "new_page"
-                    }
+                        "page": page, "a": "new_page"}
         else:
-            
             return web.HTTPFound('/')
-    
 
-
-    def slugify(self,value):
+    def slugify(self, value):
         """
         Normalizes string, converts to lowercase, removes non-alpha characters,
         and converts spaces to hyphens.
         """
-        value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+        value = unicodedata.normalize('NFKD', value)
+        value = value.encode('ascii', 'ignore')
+        value = value.decode('ascii')
         value = re.sub('[^\w\s-]', '', value).strip().lower()
         return re.sub('[-\s]+', '-', value)
-        
+
     @asyncio.coroutine
     @template('edit_page.tmpl.html')
     def post(self):
         has_perm = yield from permits(self.request, "Superuser")
         if not has_perm:
             return web.HTTPFound('/')
-        
+
         session = yield from get_session(self.request)
         form = yield from self.request.post()
         title = form['title']
         short_body = " "
         body = form['body']
         page_id = form['id'] if 'id' in form else None
-        
         url = self.slugify(title)
         engine = self.request.app.db.engine
         if page_id is None:
@@ -175,20 +178,23 @@ class EditPage(web.View):
             for row in res:
                 print(row)
         return web.HTTPFound('/page/{}'.format(url))
-        
+
+
 class DeletePost(web.View):
-    
+
     @template("delete_post.tmpl.html")
     def get(self):
+
         has_perm = yield from permits(self.request, "Superuser")
         if not has_perm:
             return web.HTTPFound('/')
-        
+
         session = yield from get_session(self.request)
         url = self.request.match_info['post']
         where_Post = models.Post.c.url_title == url
         where_user = models.Post.c.writer_id == models.User.c.id
-        q = select([models.Post, models.User],use_labels=True).where(and_(where_Post,where_user))
+        where = and_(where_Post, where_user)
+        q = select([models.Post, models.User], use_labels=True).where(where)
         with (yield from self.request.app.db.engine) as conn:
             r = yield from conn.execute(q)
             post = yield from r.fetchone()
@@ -198,29 +204,33 @@ class DeletePost(web.View):
             "post": post,
             "pages": []
         }
+
     def post(self):
         form = yield from self.request.post()
         post_id = form['id']
         where = models.Post.c.id == post_id
         q = models.Post.delete().where(where)
         with (yield from self.request.app.db.engine) as conn:
-             yield from conn.execute(q)
+            yield from conn.execute(q)
         return web.HTTPFound('/')
 
 
 class DeletePage(web.View):
-    
+
     @template("delete_page.tmpl.html")
     def get(self):
         has_perm = yield from permits(self.request, "Superuser")
         if not has_perm:
             return web.HTTPFound('/')
-        
+
         session = yield from get_session(self.request)
         url = self.request.match_info['page']
         where_Page = models.Page.c.url_title == url
         where_user = models.Page.c.writer_id == models.User.c.id
-        q = select([models.Page, models.User],use_labels=True).where(and_(where_Page,where_user))
+        where = and_(where_Page, where_user)
+        q = select([models.Page,
+                    models.User],
+                   use_labels=True).where(where)
         with (yield from self.request.app.db.engine) as conn:
             r = yield from conn.execute(q)
             page = yield from r.fetchone()
@@ -228,24 +238,24 @@ class DeletePage(web.View):
         return {
             "session": session,
             "page": page,
-            "pages": []
-        }
+            "pages": []}
+
     def post(self):
         form = yield from self.request.post()
         post_id = form['id']
         where = models.Page.c.id == post_id
         q = models.Page.delete().where(where)
         with (yield from self.request.app.db.engine) as conn:
-             yield from conn.execute(q)
+            yield from conn.execute(q)
         return web.HTTPFound('/')
 
+
 def register(app):
-    app.router.add_route("*","/post/edit",EditPost)
-    app.router.add_route("*","/post/{post}/edit",EditPost)
-    app.router.add_route("*","/post/{post}/delete",DeletePost)
-    app.router.add_route("POST","/post/delete",DeletePost)
-    app.router.add_route("*","/page/edit",EditPage)
-    app.router.add_route("*","/page/{page}/edit",EditPage)
-    app.router.add_route("*","/page/{page}/delete",DeletePage)
-    app.router.add_route("POST","/page/delete",DeletePage)
-    
+    app.router.add_route("*", "/post/edit", EditPost)
+    app.router.add_route("*", "/post/{post}/edit", EditPost)
+    app.router.add_route("*", "/post/{post}/delete", DeletePost)
+    app.router.add_route("POST", "/post/delete", DeletePost)
+    app.router.add_route("*", "/page/edit", EditPage)
+    app.router.add_route("*", "/page/{page}/edit", EditPage)
+    app.router.add_route("*", "/page/{page}/delete", DeletePage)
+    app.router.add_route("POST", "/page/delete", DeletePage)

@@ -23,12 +23,11 @@ DEFAULTS = {
         },
         "session": {
             "use_redis": False,
-            "redis" : {
+            "redis": {
                 "host": "127.0.0.1",
                 "port": 6379
             }
         }
-        
     },
     "blog": {
         "theme": "default"
