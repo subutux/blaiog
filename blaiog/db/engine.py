@@ -31,13 +31,7 @@ def get_db_session(engine):
 def init_db(engine):
     log.debug("Creating tables")
     tables = models.metadata.tables.keys()
-    conn = engine.connect()
-    for table in ('permission', 'user', 'page', 'post'):
-        Q = 'CREATE TABLE IF EXISTS {}'.format(table)
-        conn.execute(Q)
-        conn.execute(CreateTable(models.metadata.tables[table]))
-    conn.close()
-    # models.MetaData.create_all(engine)
+    models.metadata.create_all(engine)
 
 
 class Engine(object):
@@ -56,5 +50,4 @@ class Engine(object):
             password=self._config["db"]["password"],
             host=self._config["db"]["host"],
             db=self._config["db"]["database"],
-            echo=True,
             autocommit=True)
