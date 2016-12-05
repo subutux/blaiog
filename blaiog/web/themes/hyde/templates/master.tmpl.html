@@ -26,8 +26,13 @@
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
   -->
 </head>
-{% if session["user_info"]["is_superuser"] %}
-<body class="theme-base-09">
+{% if session["user_info"] %}
+
+  {% if session["user_info"]["is_superuser"] %}
+  <body class="theme-base-09">
+  {% else %}
+  <body>
+  {% endif %}
 {% else %}
 <body>
 {% endif %}
