@@ -31,9 +31,10 @@ def create_superuser(config, args):
     if pone != ptwo:
         log.error("Passwords do not match!")
         exit(1)
+    full_name = input("Full name: ")
     group = authentication.permission_add(engine, "Superuser")
     authentication.user_add(engine, user=args.superuser,
-                            password=pone,
+                            password=pone, full_name=full_name,
                             superuser=True, permission=group)
 
 
