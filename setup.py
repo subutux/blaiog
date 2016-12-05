@@ -42,7 +42,9 @@ setup(
     test_suite="tests",
     package_data={ 'blaiog': [
         'web/themes/default/static/*.css',
-        'web/themes/default/templates/*.html'
+        'web/themes/default/templates/*.html',
+        'web/themes/hyde/static/*.css',
+        'web/themes/hyde/templates/*.html'
         ]
     }
 )
