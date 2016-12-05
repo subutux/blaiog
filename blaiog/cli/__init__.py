@@ -52,6 +52,7 @@ def main():
     if args.verbose > len(LOGLEVELS):
         args.verbose = len(LOGLEVELS)
     log.setLevel(getattr(logging, LOGLEVELS[args.verbose-1]))
+    sqllog.setLevel(getattr(logging, LOGLEVELS[args.verbose-1]))
 
     consoleHandler = logging.StreamHandler(sys.stdout)
     consoleHandler.setFormatter(logFormatter)
