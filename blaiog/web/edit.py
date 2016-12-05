@@ -95,8 +95,6 @@ class EditPost(web.View):
         with (yield from engine) as conn:
             r = yield from conn.execute(q)
             res = yield from conn.execute(models.Post.select())
-            for row in res:
-                print(row)
         return web.HTTPFound('/post/{}'.format(url))
 
 
@@ -175,8 +173,6 @@ class EditPage(web.View):
         with (yield from engine) as conn:
             r = yield from conn.execute(q)
             res = yield from conn.execute(models.Page.select())
-            for row in res:
-                print(row)
         return web.HTTPFound('/page/{}'.format(url))
 
 
