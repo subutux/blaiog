@@ -11,13 +11,17 @@
 {% endblock %}
 {% block content %}
 
-<div class="post">
-  <h1 class="post-title">{{ post['post_title'] }}</h1>
-  <span class="post-date">{{ post['post_last_update'] }} by {{ post['user_login'] }}{% if session %} {% if session["user_info"] %} {% if session["user_info"]["is_superuser"] == 1 %}
+<div itemscope itemtype="http://schema.org/Article" class="post">
+  <h1 itemprop="name" class="post-title">{{ post['post_title'] }}</h1>
+  <span class="post-date">
+  <span itemprop="datePublished" content="{{ post['post_last_update']|replace(' ','T',1) }}" >{{ post['post_last_update'] }}</span> by 
+  <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{{ post['user_login'] }}</span></span>{% if session %} {% if session["user_info"] %} {% if session["user_info"]["is_superuser"] == 1 %}
             - <a href="/post/{{ post['post_url_title'] }}/edit">Edit</a>
-            {% endif %}{% endif %}{% endif %}</span>
 
+            {% endif %}{% endif %}{% endif %}</span>
+<span itemprop="articleBody">
              {{ post['body'] }}
+</span>
 </div>
 
 {% endblock %}
