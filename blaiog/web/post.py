@@ -42,6 +42,7 @@ class Post(web.View):
             "session": session,
             "error": error,
             "post": p,
+            "url": self.request.url,
             "pages": pages}
 
 

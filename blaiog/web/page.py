@@ -42,6 +42,7 @@ class Page(web.View):
             "session": session,
             "error": error,
             "page": p,
+            "url": self.request.url,
             "pages": pages,
             "a": page["page_url_title"]}
 

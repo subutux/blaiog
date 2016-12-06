@@ -14,13 +14,23 @@
 <div itemscope itemtype="http://schema.org/Article" class="post">
   <h1 itemprop="name" class="post-title">{{ post['post_title'] }}</h1>
   <span class="post-date">
-  <span itemprop="datePublished" content="{{ post['post_last_update']|replace(' ','T',1) }}" >{{ post['post_last_update'] }}</span> by 
+  <span itemprop="dateModified" content="{{ post['post_last_update']|replace(' ','T',1) }}" >{{ post['post_last_update'] }}</span> by 
   <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{{ post['user_login'] }}</span></span>{% if session %} {% if session["user_info"] %} {% if session["user_info"]["is_superuser"] == 1 %}
             - <a href="/post/{{ post['post_url_title'] }}/edit">Edit</a>
 
             {% endif %}{% endif %}{% endif %}</span>
 <span itemprop="articleBody">
              {{ post['body'] }}
+</span>
+<meta itemprop="url" content="{{ url }}">
+<meta itemprop="headline" content="{{ post['post_title'] }}">
+<meta itemprop="datePublished" content="{{ post['post_created']|replace(' ','T',1) }}">
+<meta itemprop="image" content="/static/apple-touch-icon-144-precomposed.png">
+<meta itemprop="articleSection" content="Blog item"></span>
+<span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+<meta itemprop="name" content="Blaiog">
+
+<meta itemprop="logo" content="/static/apple-touch-icon-144-precomposed.png">
 </span>
 </div>
 
