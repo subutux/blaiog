@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy import MetaData, Table, Column, String
 from sqlalchemy import Integer, ForeignKey, Boolean, DateTime, Text
+from sqlalchemy.dialects.mysql import TEXT
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 import logging
@@ -33,8 +34,8 @@ Post = Table('post', metadata,
              Column('url_title', String(256), nullable=False),
              Column('writer_id', Integer, ForeignKey('user.id'),
                     primary_key=True, nullable=False),
-             Column('short_body', Text(), nullable=True),
-             Column('body', Text(), nullable=False),
+             Column('short_body', TEXT(charset='utf8mb4'), nullable=True),
+             Column('body', TEXT(charset='utf8mb4'), nullable=False),
              Column('created', DateTime, default=sa.func.now()),
              Column('last_update', DateTime, default=sa.func.now()),
              Column('active', Boolean, nullable=False, server_default="0"))
@@ -45,8 +46,8 @@ Page = Table('page', metadata,
              Column('url_title', String(256), nullable=False),
              Column('writer_id', Integer, ForeignKey('user.id'),
                     primary_key=True, nullable=False),
-             Column('short_body', Text(), nullable=True),
-             Column('body', Text(), nullable=False),
+             Column('short_body', TEXT(charset='utf8mb4'), nullable=True),
+             Column('body', TEXT(charset='utf8mb4'), nullable=False),
              Column('created', DateTime, default=sa.func.now()),
              Column('last_update', DateTime, default=sa.func.now()),
              Column('active', Boolean, nullable=False, server_default="0"))
