@@ -14,7 +14,7 @@
 <div itemscope itemtype="http://schema.org/Article" class="post">
   <h1 itemprop="name" class="post-title">{{ post['post_title'] }}</h1>
   <span class="post-date">
-  <span itemprop="dateModified" content="{{ post['post_last_update']|replace(' ','T',1) }}" >{{ post['post_last_update'] }}</span> by 
+  <span itemprop="dateModified" content="{{ post['post_last_update']|replace(' ','T',1) }} UTC" id="dateModified">{{ post['post_last_update'] }} UTC</span> by 
   <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{{ post['user_login'] }}</span></span>{% if session %} {% if session["user_info"] %} {% if session["user_info"]["is_superuser"] == 1 %}
             - <a href="/post/{{ post['post_url_title'] }}/edit">Edit</a>
 
@@ -34,4 +34,17 @@
 </span>
 </div>
 
+{% endblock %}
+{%block footer %}
+{{ super () }}
+<script type="text/javascript" >
+    // Set the correct date/time to local
+    var dateString = "{{ post['post_last_update'] }} UTC";
+    var ele = document.getElementById("dateModified");
+    var updateDate = new Date(dateString);
+    // Fall back to 'Great Brittian' & use 24 hours representation. 
+    var newDateString = updateDate.toLocaleString(navigator.language || navigator.userLanguage || 'en-GB',{ hour12: false });
+    // Fall back to the UTC string when we get an invalid date
+    ele.innerHTML = ((newDateString == "Invalid Date") ? dateString : newDateString );
+</script>
 {% endblock %}

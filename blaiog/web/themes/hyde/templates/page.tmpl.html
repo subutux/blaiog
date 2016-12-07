@@ -7,7 +7,20 @@
   <h1 class="page-title">{{ page['page_title'] }}</h1>
   {{ page['body'] }}
   
-  <p>Last update: {{ page['page_last_update'] }}</p>
+  <p>Last update: <span id="dateModified">{{ page['page_last_update'] }} UTC</span></p>
 </div>
 
+{% endblock %}
+{%block footer %}
+{{ super () }}
+<script type="text/javascript" >
+    // Set the correct date/time to local
+    var dateString = "{{ page['page_last_update'] }} UTC";
+    var ele = document.getElementById("dateModified");
+    var updateDate = new Date(dateString);
+    // Fall back to 'Great Brittian' & use 24 hours representation. 
+    var newDateString = updateDate.toLocaleString(navigator.language || navigator.userLanguage || 'en-GB',{ hour12: false });
+    // Fall back to the UTC string when we get an invalid date
+    ele.innerHTML = ((newDateString == "Invalid Date") ? dateString : newDateString );
+</script>
 {% endblock %}

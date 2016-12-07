@@ -3,7 +3,8 @@ from blaiog.db import models
 from aiohttp_jinja2 import template
 from aiohttp_session import get_session
 from aiohttp_security import remember, forget, authorized_userid, permits
-from sqlalchemy.sql.functions import now
+# from sqlalchemy.sql.functions import now
+import arrow
 from sqlalchemy.sql import select, and_
 import asyncio
 from aiohttp import web
@@ -12,6 +13,10 @@ import re
 import logging
 log = logging.getLogger('blaiog.web.edit')
 log.addHandler(logging.NullHandler())
+
+def now():
+    
+    return arrow.utcnow().format()
 
 
 class EditPost(web.View):
