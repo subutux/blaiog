@@ -11,14 +11,14 @@ log.addHandler(logging.NullHandler())
 
 
 def get_db_engine(host, user, password, db):
-    url = "mysql+pymysql://{user}:{password}@{host}/{db}"
+    url = "mysql+pymysql://{user}:{password}@{host}/{db}?charset=utf8mb4&use_unicode=1"
 
     log.debug("Creating connection to {}".format(
         url.format(
             user=user, password="*********", host=host, db=db)))
     url = url.format(
         user=user, password=password, host=host, db=db)
-    engine = create_engine(url)
+    engine = create_engine(url,encoding="utf-8")
     return engine
 
 
@@ -50,4 +50,5 @@ class Engine(object):
             password=self._config["db"]["password"],
             host=self._config["db"]["host"],
             db=self._config["db"]["database"],
-            autocommit=True)
+            autocommit=True, charset='utf8mb4',
+            use_unicode=True)
